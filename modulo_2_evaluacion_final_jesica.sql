@@ -106,6 +106,58 @@ SELECT name, COUNT(rental_id) AS TotalPeliAlquiladasXcategoría
 
 -- EJERCIO 12 --Encuentra el promedio de duración de las películas para cada clasificación de la tabla film y muestra la clasificación junto con el promedio de duración.
 
-SELECT rating,AVG(length) AS PromedioDuración -- AVG --> Función de agregación para calcular la media
+SELECT rating,AVG(length) AS duraciónMediaPelícula -- AVG --> Función de agregación para calcular la media
 	FROM film
     GROUP BY rating; -- Agrupamos películas por grupo,para que la media por clasificación
+
+-- EJERCIO 13 -- Encuentra el nombre y apellido de los actores que aparecen en la película con title "Indian Love".
+-- RUTA Tablas:ACTOR -->FILM_ACTOR-->FILM
+
+-- Query comprobación   -- 
+SELECT a.first_name, a.last_name,title
+	FROM actor AS a
+		INNER JOIN film_actor AS fa
+			ON a.actor_id = fa.actor_id
+		INNER JOIN film AS f
+			ON fa.film_id = f.film_id
+    WHERE title = "Indian Love";
+    
+    
+-- QUERY FINAL --
+SELECT a.first_name, a.last_name
+	FROM actor AS a
+		INNER JOIN film_actor AS fa
+			ON a.actor_id = fa.actor_id
+		INNER JOIN film AS f
+			ON fa.film_id = f.film_id
+    WHERE title = "Indian Love";
+    
+    
+-- EJERCIO 14 -- Muestra el título de todas las películas que contengan la palabra "dog" o "cat" en su descripción.
+
+SELECT title, description
+	FROM film
+    WHERE description LIKE "%dog%" OR description LIKE "%cat%"; -- Es la condición
+    
+-- EJERCIO 15 -- Hay algún actor o actriz que no aparezca en ninguna película en la tabla film_actor.
+-- RUTA Tablas ACTOR -->FILM_ACTOR
+
+    -- Query comprobación   --     -- compruebo que no hay nulos
+        
+SELECT a.actor_id,f.title
+	FROM actor AS a
+		LEFT JOIN film_actor AS fa 
+		ON a.actor_id = fa.actor_id
+        LEFT JOIN film AS f
+		ON fa.film_id = f.film_id; 
+        
+-- QUERY FINAL --
+SELECT a.actor_id
+	FROM actor AS a
+		LEFT JOIN film_actor AS fa -- queremos que nos de los NULL también, no solo los actores que si tienen películas
+		ON a.actor_id = fa.actor_id
+    WHERE fa.film_id IS NULL; -- filtramos los actores que no tienen películas
+
+    
+    
+    
