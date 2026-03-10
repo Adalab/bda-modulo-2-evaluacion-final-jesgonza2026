@@ -87,24 +87,26 @@ SELECT DISTINCT f.title
 			FROM rental
 			WHERE DATEDIFF(return_date , rental_date) > 5
         );
-         ```
+```
 
 
----
+### 🚀 Cómo Ejecutar el Proyecto
 
-## 🚀 Cómo Ejecutar el Proyecto
+<details>
+<summary>Instrucciones para replicar el análisis</summary>
+
 Para replicar este análisis en tu entorno local:
 
-1.  **Requisitos:** Tener instalado **MySQL Server** y **MySQL Workbench**.
-2.  **Carga de Datos:** Descarga los scripts oficiales de [Sakila Database](https://dev.mysql.com/doc/index-other.html) e instálalos.
-3.  **Ejecución:**
-    * Abre el archivo `.sql` adjunto en este repositorio.
-    * Ejecuta el comando inicial `USE sakila;`.
-    * Puedes ejecutar cada bloque de ejercicio de forma independiente para ver los resultados en la consola.
+1. **Requisitos:** Tener instalado **MySQL Server** y **MySQL Workbench**.  
+2. **Carga de Datos:** Descarga los scripts oficiales de [Sakila Database](https://dev.mysql.com/doc/index-other.html) e instálalos.  
+3. **Ejecución:**  
+   * Abre el archivo `.sql` adjunto en este repositorio.  
+   * Ejecuta el comando inicial: `USE sakila;`.  
+   * Ejecuta cada bloque de ejercicio de forma independiente para ver los resultados en la consola.  
+
+</details>
 
 ---
 
-
-
-**Autor:** [Jesica González González]
+**Autor:** Jesica González González  
 **Fecha:** 2026
