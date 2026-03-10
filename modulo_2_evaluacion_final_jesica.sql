@@ -81,12 +81,26 @@ SELECT COUNT(film_id),rating -- cada película tiene un film_id único,es la PK(
 
 -- EJERCIO 10 -- Encuentra la cantidad total de películas alquiladas por cada cliente y muestra el ID del cliente, su nombre y apellido junto con la cantidad de películas alquiladas.
 
-SELECT c.customer_id, c.first_name, c.last_name, COUNT(r.rental_id) AS TotalPeliAlquiladas -- Usamos la función de agregación COUNT, y contamos por la columna rental_id que es la PK de la tabla rental y es la que sin duda tiene todos las películas alquiladas
+SELECT c.customer_id, c.first_name, c.last_name, COUNT(r.rental_id) AS TotalPeliAlquiladasXcliente -- Usamos la función de agregación COUNT, y contamos por la columna rental_id que es la PK de la tabla rental y es la que sin duda tiene todos las películas alquiladas
 	FROM customer AS c
-    INNER JOIN rental AS r -- usamos un INNER JOIN ya que queremos que solo queremos los clientes que han alquilado películas,no queremos a los que no han alquilado nada.
-    ON c.customer_id = r.customer_id
-    GROUP BY c.customer_id, c.first_name, c.last_name;
+		INNER JOIN rental AS r -- usamos un INNER JOIN ya que queremos que solo queremos los clientes que han alquilado películas,no queremos a los que no han alquilado nada.
+			ON c.customer_id = r.customer_id
+    GROUP BY c.customer_id, c.first_name, c.last_name; -- Agrupamos películas alquiladas por cliente
     
 
+-- EJERCIO 11 -- Encuentra la cantidad total de películas alquiladas por categoría y muestra el nombre de la categoría junto con el recuento de alquileres.
 
+-- RUTA Tablas: CATEGORY --> FILM_CATEGORY --> FILM --> INVENTORY--> RENTAL - Necesitamos 4 INNER JOIN para unir las 5 tablas, unimos unas con otras por la columna que tienen en común para ir de Categoría a Alquileres
+
+SELECT name, COUNT(rental_id) AS TotalPeliAlquiladasXcategoría
+	FROM category AS ca
+		INNER JOIN film_category AS fc
+			ON ca.category_id = fc.category_id
+		INNER JOIN film AS f
+			ON fc.film_id = f.film_id
+		INNER JOIN inventory AS i
+			ON f.film_id = i.film_id
+		INNER JOIN rental AS r
+			ON i.inventory_id = r.inventory_id
+	GROUP BY name;
 
