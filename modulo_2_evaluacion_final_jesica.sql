@@ -35,10 +35,10 @@ SELECT title
     
 -- EJERCIO 5 -- Recupera los nombres de todos los actores.
 
-SELECT first_name
+SELECT first_name,last_name
 	FROM actor;
     
--- QUERY FINAL -- Encuentra el nombre y apellido de los actores que tengan "Gibson" en su apellido.
+-- EJERCIO 6 --Encuentra el nombre y apellido de los actores que tengan "Gibson" en su apellido.
 
 -- QUERY FINAL --
 SELECT first_name,last_name
@@ -53,12 +53,12 @@ SELECT first_name,last_name
 -- EJERCIO 7 -- Encuentra los nombres de los actores que tengan un actor_id entre 10 y 20.
 
 -- Query comprobación   -- 
-SELECT first_name,actor_id
+SELECT first_name,last_name,actor_id
 	FROM actor
     WHERE actor_id BETWEEN 10 AND 20;
     
 -- QUERY FINAL --
-SELECT first_name
+SELECT first_name,last_name
 	FROM actor
     WHERE actor_id BETWEEN 10 AND 20;
     
@@ -144,7 +144,7 @@ SELECT title, description
 
     -- Query comprobación   -- Añado un LEFT JOIN a la consulta final con film para que me muestre el titulo y ver que todos los actores tienen películas y que efectivamente no hay NULL
         
-SELECT a.actor_id,f.title
+SELECT a.first_name,a.last_name,f.title
 	FROM actor AS a
 		LEFT JOIN film_actor AS fa 
 		ON a.actor_id = fa.actor_id
@@ -154,7 +154,7 @@ SELECT a.actor_id,f.title
 -- QUERY FINAL --
 SELECT a.actor_id
 	FROM actor AS a
-		LEFT JOIN film_actor AS fa -- queremos que nos de los NULL también, no solo los actores que si tienen películas
+		LEFT JOIN film_actor AS fa -- queremos que nos de los NULL también, no solo los actores que si tienen películas (LEFT JOIN)
 		ON a.actor_id = fa.actor_id
     WHERE fa.film_id IS NULL; -- filtramos los actores que no tienen películas
 
@@ -266,4 +266,108 @@ SELECT a.first_name ,a.actor_id,COUNT(f.film_id) AS CantidadPelículas
         INNER JOIN film AS f
 			ON fa.film_id = f.film_id
 	GROUP BY a.actor_id, a.first_name,a.last_name -- primero agrupamos por actor(actor _id)*añado al GROUP el a.actor_id para agrupar, ya que se pueden repetir los nombres de los actores
-	HAVING COUNT(f.film_id) >= 5;   -- cuento y pongo condición (>5)a.first_name,
+	HAVING COUNT(f.film_id) >= 5;   -- cuento y pongo condición (>5)a.first_name.
+    
+    
+  /* -- EJERCIO 22 -Encuentra el título de todas las películas que fueron alquiladas por más de 5 días.
+Utiliza unasubconsulta para encontrar los rental_ids con una duración superior a 5 días y luego selecciona las películas correspondientes*/
+
+-- SUBCONSULTA -- = FILTRO.Buscamos el dato que nos falta para poder lanzar la consulta principal: ¿Cuáles han sido las películas alquiladas por más de 5 días? Para ello necesitamos unis 3 tablas
+
+SELECT rental_id
+	FROM rental
+	WHERE DATEDIFF(return_date ,rental_date) > 5;
+    
+ -- Query comprobación Subconsulta 
+ 
+SELECT rental_id,DATEDIFF(return_date , rental_date) AS DuraciónAlquiler
+	FROM rental 
+	WHERE DATEDIFF(return_date , rental_date) > 5;   -- ------- = "Listado de películas alquiladas por más de 5 días"
+    
+
+-- QUERY FINAL -- --
+-- RUTA Tablas: FILM --> INVENTORY --> RENTAl ---> 	INNER JOIN para poder mostrar nombre película y
+
+SELECT DISTINCT f.title -- Ponemos el DISTINC para evitar que un título salga varias veces si se alquiló varias veces más de 5 días.
+	FROM film AS f
+		INNER JOIN inventory AS i
+			ON f.film_id = i.film_id
+		INNER JOIN rental AS r
+			ON i.inventory_id = r.inventory_id
+		WHERE rental_id IN ( -- > WHERE r.rental_id IN (subconsulta que es una listaque contiene solamente las películas alquilada por más de 5 días)
+			SELECT rental_id
+			FROM rental
+			WHERE DATEDIFF(return_date , rental_date) > 5); -- DATADIFF es una función que calcula la diferencia en días entre dos fechas
+
+
+/*-- EJERCIO 23-- Encuentra el nombre y apellido de los actores que no han actuado en ninguna película de la categoría
+"Horror". Utiliza una subconsulta para encontrar los actores que han actuado en películas de la
+categoría "Horror" y luego exclúyelos de la lista de actores.*/
+   
+
+-- SUBCONSULTA -- = FILTRO.Buscamos el dato que nos falta para poder lanzar la consulta principal: ¿Qué actores han actuado en películas de la categoría "Horror"?
+-- RUTA Tablas: ACTOR --> FILM_ACTOR--> FILM--> FILM_CATEGORY--> CATEGORY
+
+ -- Query comprobación Subconsulta 
+SELECT a.first_name,a.last_name,a.actor_id,c.name
+	FROM actor as a
+		INNER JOIN film_actor AS fa
+			ON a.actor_id = fa.actor_id
+		INNER JOIN film AS f
+			ON fa.film_id =f.film_id
+		INNER JOIN film_category AS fc
+			ON f.film_id = fc.film_id
+		INNER JOIN category as c
+			ON fc.category_id = c.category_id
+	WHERE c.name = "Horror"; -- compuebo que solo sale la categoría "Horror"
+
+ 
+-- SUBCONSULTA--
+SELECT a.first_name,a.last_name
+	FROM actor as a
+		INNER JOIN film_actor AS fa
+			ON a.actor_id = fa.actor_id
+		INNER JOIN film AS f
+			ON fa.film_id = f.film_id
+		INNER JOIN film_category AS fc
+			ON f.film_id = fc.film_id
+		INNER JOIN category as c
+			ON fc.category_id = c.category_id
+	WHERE c.name = "Horror"; --  ------------- = Listado de actores han actuado en películas de la categoría "Horror"(SUBCONSULTA)
+    
+    -- QUERY FINAL --
+    SELECT first_name,last_name
+		FROM actor
+			WHERE actor_id NOT IN ( -- >Ponemos el NOT IN para indicar queno esté dentro de ese listado(Ya que en ese listado están sólo las películas de la categoría HORROR)
+				SELECT a.actor_id
+				FROM actor as a
+					INNER JOIN film_actor AS fa
+						ON a.actor_id = fa.actor_id
+					INNER JOIN film AS f
+						ON fa.film_id = f.film_id
+					INNER JOIN film_category AS fc
+						ON f.film_id = fc.film_id
+					INNER JOIN category as c
+						ON fc.category_id = c.category_id
+				WHERE c.name = "Horror");
+                
+-- EJERCIO 24--Encuentra el título de las películas que son comedias y tienen una duración mayor a 180 minutos en la tabla film
+-- RUTA Tablas: FILM --> FILM_CATEGORY --> CATEGORY
+
+ -- Query comprobación --Comprobamos que todas son categoria comedia y que todas duran más de 180 min
+SELECT f.title,c.name,f.length
+	FROM film AS f
+		INNER JOIN film_category AS fc
+			ON f.film_id = fc.film_id
+		INNER JOIN category AS c
+			ON fc.category_id =c.category_id
+    WHERE c.name = "Comedy" AND f.length >180; 
+    
+  -- QUERY FINAL --
+SELECT title
+	FROM film AS f
+		INNER JOIN film_category AS fc
+			ON f.film_id = fc.film_id
+		INNER JOIN category AS c
+			ON fc.category_id = c.category_id
+    WHERE c.name = "Comedy" AND f.length >180;  -- AND -->deben cumplir ambas condiciones
