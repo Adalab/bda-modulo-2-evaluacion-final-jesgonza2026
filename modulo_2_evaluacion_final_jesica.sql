@@ -38,7 +38,7 @@ SELECT title
 SELECT first_name
 	FROM actor;
     
--- EJERCIO 6 -- Encuentra el nombre y apellido de los actores que tengan "Gibson" en su apellido.
+-- QUERY FINAL -- Encuentra el nombre y apellido de los actores que tengan "Gibson" en su apellido.
 
 -- QUERY FINAL --
 SELECT first_name,last_name
@@ -49,3 +49,44 @@ SELECT first_name,last_name
 SELECT first_name,last_name
 	FROM actor
     WHERE last_name LIKE "%gibson%";
+    
+-- EJERCIO 7 -- Encuentra los nombres de los actores que tengan un actor_id entre 10 y 20.
+
+-- Query comprobación   -- 
+SELECT first_name,actor_id
+	FROM actor
+    WHERE actor_id BETWEEN 10 AND 20;
+    
+-- QUERY FINAL --
+SELECT first_name
+	FROM actor
+    WHERE actor_id BETWEEN 10 AND 20;
+    
+-- EJERCIO 8 -- Encuentra el título de las películas en la tabla film que no sean ni "R" ni "PG-13" en cuanto a su clasificación.
+-- Query comprobación   -- 
+SELECT title,rating
+	FROM film
+    WHERE rating NOT IN ("R", "PG-13");
+
+-- QUERY FINAL --
+SELECT title 
+	FROM film
+    WHERE rating NOT IN ("R", "PG-13"); -- se podría realizar también con el operador distinto de <> y AND
+    
+-- EJERCIO 9 --Encuentra la cantidad total de películas en cada clasificación de la tabla film y muestra la clasificación junto con el recuento.
+
+SELECT COUNT(film_id),rating -- cada película tiene un film_id único,es la PK(film_id de la tabla) y la PK nunca puede ser NULL.Usando PK nos aseguramos que estamos contando todas las películas
+	FROM film
+    GROUP BY rating;
+
+-- EJERCIO 10 -- Encuentra la cantidad total de películas alquiladas por cada cliente y muestra el ID del cliente, su nombre y apellido junto con la cantidad de películas alquiladas.
+
+SELECT c.customer_id, c.first_name, c.last_name, COUNT(r.rental_id) AS TotalPeliAlquiladas -- Usamos la función de agregación COUNT, y contamos por la columna rental_id que es la PK de la tabla rental y es la que sin duda tiene todos las películas alquiladas
+	FROM customer AS c
+    INNER JOIN rental AS r -- usamos un INNER JOIN ya que queremos que solo queremos los clientes que han alquilado películas,no queremos a los que no han alquilado nada.
+    ON c.customer_id = r.customer_id
+    GROUP BY c.customer_id, c.first_name, c.last_name;
+    
+
+
+
