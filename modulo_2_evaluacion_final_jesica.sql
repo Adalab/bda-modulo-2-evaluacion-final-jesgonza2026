@@ -142,7 +142,7 @@ SELECT title, description
 -- EJERCIO 15 -- Hay algún actor o actriz que no aparezca en ninguna película en la tabla film_actor.
 -- RUTA Tablas ACTOR -->FILM_ACTOR
 
-    -- Query comprobación   --     -- compruebo que no hay nulos
+    -- Query comprobación   -- Añado un LEFT JOIN a la consulta final con film para que me muestre el titulo y ver que todos los actores tienen películas y que efectivamente no hay NULL
         
 SELECT a.actor_id,f.title
 	FROM actor AS a
@@ -157,6 +157,45 @@ SELECT a.actor_id
 		LEFT JOIN film_actor AS fa -- queremos que nos de los NULL también, no solo los actores que si tienen películas
 		ON a.actor_id = fa.actor_id
     WHERE fa.film_id IS NULL; -- filtramos los actores que no tienen películas
+
+-- EJERCIO 16 --Encuentra el título de todas las películas que fueron lanzadas entre el año 2005 y 2010.
+
+ -- Query comprobación   --
+SELECT title,release_year
+	FROM film
+    WHERE release_year BETWEEN 2005 AND 2010
+    ORDER BY release_year DESC;
+
+-- QUERY FINAL --
+SELECT title
+	FROM film
+    WHERE release_year BETWEEN 2005 AND 2010;
+
+-- EJERCIO 17 -- Encuentra el título de todas las películas que son de la misma categoría que "Family".
+
+-- RUTA Tablas: FILM --> FILM_CATEGORY --> CATEGORY
+ -- Query comprobación   --
+ 
+SELECT title,name
+	FROM film AS f
+		INNER JOIN film_category AS fi
+			ON f.film_id = fi.film_id
+		INNER JOIN category AS c
+			ON c.category_id = c.category_id
+	WHERE name = "Family";
+
+
+-- QUERY FINAL --
+
+SELECT title
+	FROM film AS f
+		INNER JOIN film_category AS fi
+			ON f.film_id = fi.film_id
+		INNER JOIN category AS c
+			ON c.category_id = c.category_id
+	WHERE name = "Family";
+
+
 
     
     
