@@ -104,3 +104,8 @@ SELECT name, COUNT(rental_id) AS TotalPeliAlquiladasXcategoría
 			ON i.inventory_id = r.inventory_id
 	GROUP BY name;
 
+-- EJERCIO 12 --Encuentra el promedio de duración de las películas para cada clasificación de la tabla film y muestra la clasificación junto con el promedio de duración.
+
+SELECT rating,AVG(length) AS PromedioDuración -- AVG --> Función de agregación para calcular la media
+	FROM film
+    GROUP BY rating; -- Agrupamos películas por grupo,para que la media por clasificación
