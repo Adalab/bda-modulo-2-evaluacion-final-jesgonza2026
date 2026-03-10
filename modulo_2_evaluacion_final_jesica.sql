@@ -181,7 +181,7 @@ SELECT title,name
 		INNER JOIN film_category AS fi
 			ON f.film_id = fi.film_id
 		INNER JOIN category AS c
-			ON c.category_id = c.category_id
+			ON fi.category_id = c.category_id
 	WHERE name = "Family";
 
 
@@ -192,11 +192,78 @@ SELECT title
 		INNER JOIN film_category AS fi
 			ON f.film_id = fi.film_id
 		INNER JOIN category AS c
-			ON c.category_id = c.category_id
+			ON fi.category_id = c.category_id
 	WHERE name = "Family";
 
 
+-- EJERCIO 18 -- Muestra el nombre y apellido de los actores que aparecen en más de 10 películas.
+-- RUTA Tablas:ACTOR -->FILM_ACTOR-->FILM --INNER JOIN (solo nos interesan actores que tengan películas)- 
 
+ -- Query comprobación   --Comprobamos que todos los actores tienen al menos 10 peliculas
+SELECT a.actor_id, a.first_name, COUNT(fa.film_id)
+FROM actor AS a
+INNER JOIN film_actor AS fa
+    ON a.actor_id = fa.actor_id
+GROUP BY a.actor_id, a.first_name
+ORDER BY COUNT(fa.film_id) DESC;
+
+
+-- QUERY FINAL --
+
+SELECT first_name, last_name 
+	FROM actor AS a
+		INNER JOIN film_actor AS fa 
+			ON a.actor_id = fa.actor_id
+        INNER JOIN film AS f
+			ON fa.film_id = f.film_id
+	GROUP BY a.actor_id, a.first_name, a.last_name -- primero agrupamos por actor(actor _id)
+	HAVING COUNT(fa.film_id) > 10; -- luego contamos,usamos HAVING en lugar de WHERE porque después del GROYP BY se usa HAVING
     
+  -- EJERCIO 19 --Encuentra el título de todas las películas que son "R" y tienen una duración mayor a 2 horas en la tabla film.
+  
+  -- Query comprobación 
+SELECT title,rating,length
+	FROM film
+    WHERE rating = "R" AND length > 120
+	LIMIT 25;
     
+
+-- QUERY FINAL --
+SELECT title
+	FROM film
+    WHERE rating = "R" AND length > 120;
     
+/*-- EJERCIO 20 --Encuentra las categorías de películas que tienen un promedio de duración superior a 120 minutos 
+y muestra el nombre de la categoría junto con el promedio de duración.*/
+
+SELECT c.name, AVG(f.length) AS PromedioDuración -- columnas que nos piden mostrar
+	FROM film AS f
+		INNER JOIN film_category AS fi
+			ON f.film_id = fi.film_id
+		INNER JOIN category AS c
+			ON fi.category_id = c.category_id
+	GROUP BY c.name -- agrupo por nombre de catagoría
+	HAVING  AVG(f.length) >120; -- cuento y pongo condición (>120)
+    
+-- EJERCIO 21 --Encuentra los actores que han actuado en al menos 5 películas y muestra el nombre del actor junto con la cantidad de películas en las que han actuado.
+ -- Query comprobación -- todos los actores tienen más de 5 películas
+ 
+SELECT a.first_name ,a.actor_id,COUNT(f.film_id) AS CantidadPelículas 
+	FROM actor AS a
+		INNER JOIN film_actor AS fa 
+			ON a.actor_id = fa.actor_id
+        INNER JOIN film AS f
+			ON fa.film_id = f.film_id
+	GROUP BY a.first_name,a.actor_id
+    ORDER BY CantidadPelículas ASC
+    LIMIT 5; -- comprobamos los 5 primeros cuanta películas han actuado -- todos los actores han actuado en al menos 5 peliculas
+    
+-- QUERY FINAL --
+  SELECT a.first_name, a.last_name,COUNT(f.film_id) AS CantidadPelículas 
+	FROM actor AS a
+		INNER JOIN film_actor AS fa 
+			ON a.actor_id = fa.actor_id
+        INNER JOIN film AS f
+			ON fa.film_id = f.film_id
+	GROUP BY a.actor_id, a.first_name,a.last_name -- primero agrupamos por actor(actor _id)*añado al GROUP el a.actor_id para agrupar, ya que se pueden repetir los nombres de los actores
+	HAVING COUNT(f.film_id) >= 5;   -- cuento y pongo condición (>5)a.first_name,
